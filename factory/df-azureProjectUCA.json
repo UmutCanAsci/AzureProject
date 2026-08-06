@@ -1,0 +1,15 @@
+{
+	"name": "df-azureProjectUCA",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "francecentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "02003d48-4f01-4150-a4f9-fce2e6f2d209",
+		"tenantId": "d9ed5b65-9544-4158-ba11-6f5579b47adf"
+	}
+}
