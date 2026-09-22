@@ -102,7 +102,7 @@
 └──────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
-[![End-to-End Architecture Diagram](https://via.placeholder.com/1000x500?text=INSERT+YOUR+SCREENSHOT:+Full+End-to-End+Architecture+%E2%80%94+Azure+Portal+Resource+Group+Overview)](#)
+[![End-to-End Architecture Diagram](docs/screenshots/resoruceGroup.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Azure Portal → Resource Group overview showing all provisioned resources: df-azureProjectUCA (ADF), umutcanasci (ADLS Gen2), dataBricksAzureProject (Databricks), logicApp_azureProject (Logic Apps), accessConnector_azureProject (Access Connector). -->
 
 ---
@@ -165,10 +165,10 @@ abfss://databricksmetastore@umutcanasci.dfs.core.windows.net/
 └── __unitystorage/         ← Unity Catalog metastore root (system-managed)
 ```
 
-[![ADLS Gen2 Container Layout](https://via.placeholder.com/1000x400?text=INSERT+YOUR+SCREENSHOT:+ADLS+Gen2+Storage+Account+%E2%80%94+Container+Listing+(bronze%2C+silver%2C+gold%2C+databricksmetastore))](#)
+[![ADLS Gen2 Container Layout](docs/screenshots/container.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Azure Portal → Storage Account (umutcanasci) → Containers blade, showing all four containers: bronze, silver, gold, databricksmetastore. -->
 
-[![Bronze Container File Tree](https://via.placeholder.com/1000x400?text=INSERT+YOUR+SCREENSHOT:+Bronze+Container+%E2%80%94+Parquet+Folder+Structure+with+_cdc+Directories)](#)
+[![Bronze Container File Tree](docs/screenshots/bronze.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Azure Portal → Storage Account → bronze container, showing DimArtist/, DimArtist_cdc/, DimUser/, DimUser_cdc/, etc. -->
 
 ### Unity Catalog Metastore Architecture
@@ -190,15 +190,13 @@ azureproject_catalog
     └── factstream
 ```
 
-[![Unity Catalog Explorer](https://via.placeholder.com/1000x450?text=INSERT+YOUR+SCREENSHOT:+Databricks+Unity+Catalog+Explorer+%E2%80%94+azureproject_catalog+with+silver+and+gold+schemas)](#)
+[![Unity Catalog Explorer](docs/screenshots/unity_cata.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Databricks UI → Catalog Explorer → azureproject_catalog → expanded silver schema showing registered Delta tables (dimuser_table, dimtrack_table, etc.) and gold schema. -->
 
 ---
 
 ## 🔄 Data Ingestion & Orchestration Engine (ADF & Logic Apps)
 
-[![ADF Overview](https://via.placeholder.com/1000x450?text=INSERT+YOUR+SCREENSHOT:+ADF+Studio+%E2%80%94+Pipeline+List+(incremental_loop+%26+incremental_ingestion))](#)
-<!-- SCREENSHOT PLACEHOLDER: Azure Data Factory Studio → Author → Pipelines pane showing incremental_loop and incremental_ingestion pipelines listed. -->
 
 ### Pipeline 1 — `incremental_loop`
 
@@ -225,7 +223,7 @@ The orchestration entry point. It accepts a single **JSON array parameter** (`lo
 
 The `ForEach1` activity iterates over each element of this array and invokes `incremental_ingestion` as a child pipeline, passing all four fields as parameters. The activity can be configured in **parallel** (default) or **sequential** mode depending on source system concurrency constraints.
 
-[![incremental_loop Pipeline Canvas](https://via.placeholder.com/1000x500?text=INSERT+YOUR+SCREENSHOT:+ADF+Canvas+%E2%80%94+incremental_loop+Pipeline+with+ForEach1+Activity)](#)
+[![incremental_loop Pipeline Canvas](docs/screenshots/ADF_incremental_loop.png](#)
 <!-- SCREENSHOT PLACEHOLDER: ADF Studio → incremental_loop pipeline canvas, showing: Parameters panel (loop_input JSON array), ForEach1 activity connected to the Execute Pipeline activity, and the Alerts Web Activity on the failure port. -->
 
 ### Pipeline 2 — `incremental_ingestion`
@@ -265,7 +263,7 @@ The atomic ingestion unit, invoked once per source table per pipeline run. Execu
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-[![incremental_ingestion Pipeline Canvas](https://via.placeholder.com/1000x500?text=INSERT+YOUR+SCREENSHOT:+ADF+Canvas+%E2%80%94+incremental_ingestion+Pipeline+(All+4+Stages))](#)
+[![incremental_ingestion Pipeline Canvas](docs/screenshots/ADF_incremantal_ingestion.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: ADF Studio → incremental_ingestion pipeline canvas showing the linear activity chain: Lookup (last_cdc) → Set Variable (current) → Copy Data (AzureSQLtoLake) → If Condition (If_incrementalData) with TRUE/FALSE branches. -->
 
 ### Parameterised Dataset Design
@@ -306,7 +304,7 @@ Body: {
 
 The Logic App (`logicApp_azureProject`) uses the **Outlook API connector** to deliver formatted HTML failure-notification emails to the operations team, including pipeline name, run ID, failure time, and ADF deep-link.
 
-[![Logic App Designer](https://via.placeholder.com/1000x400?text=INSERT+YOUR+SCREENSHOT:+Logic+App+Designer+%E2%80%94+HTTP+Trigger+%2B+Outlook+Send+Email+Action)](#)
+[![Logic App Designer](docs/screenshots/logicApp.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Azure Portal → logicApp_azureProject → Logic App Designer, showing the HTTP Trigger step connected to the "Send an email (V2)" Outlook action with the ADF payload mapped to the email body. -->
 
 ---
@@ -411,7 +409,7 @@ def preview(df, rows=10):
 - **In-memory sink:** The `memory` format never persists data to storage — the write is purely transient, suitable only for interactive development.
 - **Automatic cleanup:** `_temp_checkpoints/` directories can be scheduled for periodic deletion via an ADF `Delete` activity or a Databricks job task to prevent storage cost accumulation.
 
-[![Silver Notebook — Streaming Preview](https://via.placeholder.com/1000x400?text=INSERT+YOUR+SCREENSHOT:+Databricks+Notebook+%E2%80%94+silverUser_dimensions+%E2%80%94+preview()+Function+Output)](#)
+[![Silver Notebook — Streaming Preview](docs/screenshots/silver_notebook.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Databricks → silverUser_dimensions.ipynb → cell showing the preview() function and the resulting display() output of the streamed Silver Delta table rows. -->
 
 ---
@@ -489,10 +487,10 @@ dlt.create_streaming_table(
 
 **`@dlt.expect_all_or_drop` semantics:** Any row failing a declared expectation is quarantined and excluded from the output table. DLT records dropped row counts in the pipeline event log, providing full observability of data quality violations without pipeline failure.
 
-[![DLT Pipeline DAG](https://via.placeholder.com/1000x500?text=INSERT+YOUR+SCREENSHOT:+Databricks+%E2%80%94+Delta+Live+Tables+%E2%80%94+gold_pipeline+DAG+Graph)](#)
+[![DLT Pipeline DAG](docs/screenshots/DLT.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Databricks → Delta Live Tables → gold_pipeline → Pipeline Graph view showing the full DAG with silver source nodes → _stg streaming tables → target dimension/fact nodes, with green (passed) or yellow (expectations dropped rows) quality indicators. -->
 
-[![DLT Event Log & Data Quality Metrics](https://via.placeholder.com/1000x400?text=INSERT+YOUR+SCREENSHOT:+DLT+Pipeline+%E2%80%94+Event+Log+%2F+Data+Quality+Metrics+Panel)](#)
+[![DLT Event Log & Data Quality Metrics](docs/screenshots/quality.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Databricks → Delta Live Tables → gold_pipeline → Pipeline run details → Event Log tab, or the Data Quality panel showing expectation pass/fail metrics for dimuser (rule_1: user_id IS NOT NULL). -->
 
 ### Gold Pipeline — DLT Utilities (`src/gold/dlt/utilities/utils.py`)
@@ -587,7 +585,7 @@ resources:
 | **Catalog** | `azureproject_catalog` | `azureproject_catalog` |
 | **Schema** | `silver` | `gold` |
 
-[![DAB Dev Deployment in Workspace](https://via.placeholder.com/1000x400?text=INSERT+YOUR+SCREENSHOT:+Databricks+Workspace+%E2%80%94+.bundle%2Fspotify_dab+Dev+Deployment+Folder)](#)
+[![DAB Dev Deployment in Workspace](docs/screenshots/bundle.png)](#)
 <!-- SCREENSHOT PLACEHOLDER: Databricks Workspace browser → /Workspace/Users/umutcanasci@posta.mu.edu.tr/.bundle/ showing the deployed spotify_dab bundle resources (jobs, pipelines). -->
 
 ---
