@@ -223,8 +223,6 @@ The orchestration entry point. It accepts a single **JSON array parameter** (`lo
 
 The `ForEach1` activity iterates over each element of this array and invokes `incremental_ingestion` as a child pipeline, passing all four fields as parameters. The activity can be configured in **parallel** (default) or **sequential** mode depending on source system concurrency constraints.
 
-[![incremental_loop Pipeline Canvas](docs/screenshots/ADF_incremental_loop.png](#)
-<!-- SCREENSHOT PLACEHOLDER: ADF Studio → incremental_loop pipeline canvas, showing: Parameters panel (loop_input JSON array), ForEach1 activity connected to the Execute Pipeline activity, and the Alerts Web Activity on the failure port. -->
 
 ### Pipeline 2 — `incremental_ingestion`
 
